@@ -89,7 +89,7 @@ plt.close("all")
 
 
 # EXPERIMENT PARAMETERS
-dt = 0.1 # system sample time
+dt = 0.05 # system sample time
 exp_time = 80 # total experiment time
 samples = int(1/dt) * exp_time
 
