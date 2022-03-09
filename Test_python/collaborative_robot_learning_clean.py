@@ -10,10 +10,11 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 from pDMP_functions import pDMP
 from matplotlib import gridspec 
+from IPython.display import HTML
 
 plt.close('all')
 
-anim = 0
+anim = 1
 
 # EXPERIMENT PARAMETERS
 dt = 0.05 # system sample time
@@ -153,13 +154,13 @@ for i in range ( samples ):
 
 data = np.asarray(data)
 data_2_ = np.asarray(data_2_)
-
+'''
 plt.figure()
 plt.plot(time_, data_1[:,0])
 plt.plot(time_, data_2[:,0])
 plt.plot(time_, data[:,2])
 plt.show()
-
+'''
 sn = int(np.where(np.isclose(K1_2, K1max))[0][np.where(np.where(np.isclose(K1_2, K1max))[0] > (samples*2/3))[0][0]])
 
 
@@ -181,71 +182,113 @@ dx1_last = data_1[sn+1,1]
 
 e_th = 0.1
 
-data_1_repro = []
-data_2_repro = []
-time_new = []
-K2_learn = []
-K2_last = 0
+e_th_ = [0.01, 0.1]
 
+for e_th in e_th_:
 
-data_1_repro.append([x1_last, dx1_last])
-data_2_repro.append([x2_last, dx1_last])
-K2_learn.append(K2_last)
-
-for i in range(1,samples-sn):
+    data_1_repro = []
+    data_2_repro = []
+    time_new = []
+    K2_learn = []
+    K2_last = 0
     
-    e_phi = data_2_repro_ex[i,0] - x2_last
     
-    if abs(e_phi) >= e_th:
-        K2 = K2max
-    else:
-        K2 = 0
+    data_1_repro.append([x1_last, dx1_last])
+    data_2_repro.append([x2_last, dx1_last])
+    K2_learn.append(K2_last)
+    
+    for i in range(1,samples-sn):
         
-    K2_learn.append(K2)
-    
-    if np.sin(phase_new[i])>=0:
-        ddx1 = K1_2_new[i]/m *(xr1l - x1_last) - (c1/m)*dx1_last + K2/m *(xr1l - x1_last) -  (c2/m)*dx1_last 
-    else: 
-        ddx1 = K1_2_new[i]/m *(xr1r - x1_last) - (c1/m)*dx1_last + K2/m *(xr1r - x1_last) -  (c2/m)*dx1_last 
+        e_phi = data_2_repro_ex[i,0] - x2_last
         
+        if abs(e_phi) >= e_th:
+            K2 = K2max
+        else:
+            K2 = 0
+            
+        K2_learn.append(K2)
+        
+        if np.sin(phase_new[i])>=0:
+            ddx1 = K1_2_new[i]/m *(xr1l - x1_last) - (c1/m)*dx1_last + K2/m *(xr1l - x1_last) -  (c2/m)*dx1_last 
+        else: 
+            ddx1 = K1_2_new[i]/m *(xr1r - x1_last) - (c1/m)*dx1_last + K2/m *(xr1r - x1_last) -  (c2/m)*dx1_last 
+            
+        
+        dx1 = ddx1*dt + dx1_last
+        x1 = dx1*dt + x1_last
+        
+        data_1_repro.append([x1, dx1])
+        data_2_repro.append([x1 + L, dx1])
+        
+        x1_last = x1
+        dx1_last = dx1
+        time_new.append(dt*i)
+     
+    data_1_repro = np.asarray(data_1_repro)
+    data_2_repro = np.asarray(data_2_repro)
     
-    dx1 = ddx1*dt + dx1_last
-    x1 = dx1*dt + x1_last
+    data_1_total = np.concatenate((data_1_learn[:,0], data_1_repro[:,0]))
+    data_2_total = np.concatenate((data_2_learn[:,0], data_2_repro[:,0]))
+    K1 = np.concatenate((K1_1[:sn], K1_2_new))
+    K2 = np.concatenate((np.zeros(sn), K2_learn))
     
-    data_1_repro.append([x1, dx1])
-    data_2_repro.append([x1 + L, dx1])
     
-    x1_last = x1
-    dx1_last = dx1
-    time_new.append(dt*i)
- 
-data_1_repro = np.asarray(data_1_repro)
-data_2_repro = np.asarray(data_2_repro)
+    ''' Figures '''
+    fig = plt.figure()
+    gs = gridspec.GridSpec(2, 1, height_ratios = [2,1]) 
+    
+    ax0 = plt.subplot(gs[0])
+    ax1 = plt.subplot(gs[1], sharex = ax0)
+    
+    ax0.grid('on')
+    ax1.grid('on')
+    
+    ax0.plot(time_,data_1_total)
+    ax0.plot(time_,data_2_total)
+    ax0.plot(time_[:int(samples/3)], data_2[:int(samples/3),0])
+    ax0.axvline(x = time_[int(samples/3)], color="grey")
+    ax0.axvline(x = time_[sn], color="grey")
+    
+    ax1.plot(time_, K1)
+    ax1.plot(time_, K2)
+    ax1.axvline(x = time_[sn], color="grey")
+    
+    ax0.set_ylabel('position [m]')
+    ax1.set_ylabel('Stiffnes [N/m]')
+    ax1.set_xlabel('time [s]')
+     
+    plt.savefig('images/stifness_e_th='+str(e_th)+'.png')
+    plt.show()
 
-data_1_total = np.concatenate((data_1_learn[:,0], data_1_repro[:,0]))
-data_2_total = np.concatenate((data_2_learn[:,0], data_2_repro[:,0]))
-K1 = np.concatenate((K1_1[:sn], K1_2_new))
-K2 = np.concatenate((np.zeros(sn), K2_learn))
+if anim == 1:
 
+    data_1_anim = data_1_total[int(samples/3):]
+    data_2_anim = data_2_total[int(samples/3):]
+    def animate(i):
+        x1 = data_1_anim[i]
+        x2 = data_2_anim[i]
+        line.set_data([x1, x2], [0,0])
+    
+    def init():
+        ax.set_xlim(-L-0.1,L + 0.1)
+        ax.set_xlabel('$x$ [m]')
+        line.set_data([L/2, -L/2],[0,0])
+        return line
+    
+    
+    fig, ax = plt.subplots()
+    ax.set_aspect('equal')
+    ax.set(yticklabels=[])  # remove the tick labels
+    
+    # These are the objects we need to keep track of.
+    line, = ax.plot([], [], 'o-', lw=5, color='#de2d26')
+    
+    interval = 100*dt
+    ani = animation.FuncAnimation(fig, animate, interval=interval, repeat=False, init_func=init)
+    
+    #f = "images/video.avi" 
+    #writergif = animation.PillowWriter(fps=30) 
+    #ani.save(f, writer=writergif)
+    #ani.save('images/video.mp4', fps = 100)
 
-''' Figures '''
-fig = plt.figure()
-gs = gridspec.GridSpec(2, 1, height_ratios = [2,1]) 
-
-ax0 = plt.subplot(gs[0])
-ax1 = plt.subplot(gs[1], sharex = ax0)
-
-ax0.grid('on')
-ax1.grid('on')
-
-ax0.plot(time_,data_1_total)
-ax0.plot(time_[:int(samples/3)], data_2[:int(samples/3),0])
-ax0.plot(time_,data_2_total)
-ax0.axvline(x = time_[int(samples/3)], color="grey")
-ax0.axvline(x = time_[sn], color="grey")
-
-ax1.plot(time_, K1)
-ax1.plot(time_, K2)
-ax1.axvline(x = time_[sn], color="grey")
- 
-plt.show()
+    plt.show()

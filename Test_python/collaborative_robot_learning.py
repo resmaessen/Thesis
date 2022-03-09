@@ -13,7 +13,7 @@ from matplotlib import gridspec
 
 plt.close('all')
 
-anim = 0
+anim = 1
 
 # EXPERIMENT PARAMETERS
 dt = 0.05 # system sample time
