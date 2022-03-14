@@ -5,7 +5,7 @@ Created on Thu Feb 28 2022
 @author: Rosa Maessen
 
 This code is based on the AFS_structure code from Tadej Petric
-https://journals.sagepub.com/doi/pdf/10.1177/0278364911421511
+https://gitlab.com/tpetric/AFS_C/-/blob/master/AFSstructure.cpp
 Instead of C++, Python is used!
 
 following this paper: https://journals.sagepub.com/doi/pdf/10.1177/0278364911421511
@@ -85,7 +85,7 @@ class AFS:
             self.y_fb[j] = 0    # Initial state before first calculation
             
             self.phi[j] = 0
-            self.Omega[j] = frequency[j]
+            self.Omega[j] = frequency
             
             for i in range(self.N):
                 self.alpha[j,i] = 0
@@ -125,12 +125,12 @@ class AFS:
 
         
     
-    def AFS_integrate(self, dt):
+    def AFS_integrate(self, dt, steps):
         
-        servo_rate = 1                  # Servo_base_rate / Task_servo_ratio
-        desired_dt = 1.0/servo_rate     # Servo_rate
+        #servo_rate = 1                  # Servo_base_rate / Task_servo_ratio
+        #desired_dt = 1.0/servo_rate     # Servo_rate
         
-        steps = round(dt / desired_dt + 0.5)
+        #steps = round(dt / desired_dt + 0.5)
         #steps = 10
         dt = dt/steps
         

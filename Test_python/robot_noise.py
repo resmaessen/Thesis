@@ -24,8 +24,8 @@ plt.close('all')
 
 
 # EXPERIMENT PARAMETERS
-dt = 0.05 # system sample time
-exp_time = 160 # total experiment time
+dt = 0.1 # system sample time
+exp_time = 80 # total experiment time
 samples = int(1/dt) * exp_time
 
 DOF = 4 # degrees of freedom (number of DMPs to be learned)
@@ -71,7 +71,7 @@ phase_human_b = []
 
 freq_initial = 2
 frequency_init = np.ones(4)*freq_initial
-frequency_last = frequency_init
+frequency_last = 2
 
 myAFS.set_initial_AFS_state(frequency_last)
 
@@ -79,17 +79,18 @@ for i in range(samples):
         
     for j in range(DOF):
         myAFS.update_input(j, data_human[i,j])
-        myAFS.set_frequency(j,frequency_init[j])
+        #myAFS.set_frequency(j,frequency_init[j])
         
 
     myAFS.AFS_integrate(dt)    
     data_human_temp = []
     phase_temp = []
+    frequency_last = []
     
     for i in range(DOF):
         data_human_temp.append(myAFS.get_output(i))
         phase_temp.append(myAFS.get_phase(i))
-        frequency_last[i] = myAFS.get_frequency(i)
+        frequency_last.append(myAFS.get_frequency(i))
     
     data_human_b.append([data_human_temp[1], phase_temp[1], frequency_last[1]])
     phase_human_b.append(phase_temp)
@@ -178,7 +179,7 @@ plt.plot(data_robot[:,0],data_robot[:,2],'b')
 plt.xlabel('time [s]', fontsize='12')
 plt.ylabel('signal', fontsize='13')
 
-plt.legend(['input','DMP'])
+plt.legend(['input','AFS'])
 
 plt.title('Periodic DMP', fontsize='14')
 plt.show()
