@@ -16,10 +16,11 @@ import random
 import params as p
 
 
-def run_file(runs_ = 12, e_th = p.e_th, close = True):
+def run_file(runs_ = 12, e_th = p.e_th, N= p.N, h = p.h, \
+             close = True, v_eth = False, v_N = False, v_h = False):
     
-    dt, exp_time, samples, DOF, N, alpha, beta, lambd, tau, phi, mode, tau, phi, L = \
-        p.dt, p.exp_time, p.samples, p.DOF, p.N, p.alpha, p.beta, p.lambd, p.tau, p.phi, p.mode, p.tau, p.phi, p.L
+    dt, exp_time, samples, DOF, alpha, beta, lambd, tau, phi, mode, tau, phi, L = \
+        p.dt, p.exp_time, p.samples, p.DOF, p.alpha, p.beta, p.lambd, p.tau, p.phi, p.mode, p.tau, p.phi, p.L
     K1max, K2max, c1, c2, m, g, mu_s, mu_k, mu_s_random, mu_k_random, F_y, F_n, F_fs_max, F_fk = \
         p.K1max, p.K2max, p.c1, p.c2, p.m, p.g, p.mu_s, p.mu_k, p.mu_s_random, p.mu_k_random, p.F_y, p.F_n, p.F_fs_max, p.F_fk
     
@@ -56,7 +57,6 @@ def run_file(runs_ = 12, e_th = p.e_th, close = True):
         phi = 0
         frequency_last = np.pi
         
-        h = 0.5
         
         
         # create a DMP and AFS objects
@@ -200,9 +200,18 @@ def run_file(runs_ = 12, e_th = p.e_th, close = True):
         figManager.window.showMaximized()
         
         # remove vertical gap between subplots
-        plt.savefig('images/Skill_transfer_e_th_'+str(e_th)+'_chain_'+str(run)+'.png')
-        if close: 
+        if v_eth: 
+            fig.savefig('images/e_th/Skill_transfer_e_th_'+str(e_th)+'_chain_'+str(run)+'.png')
+        elif v_N:
+            fig.savefig('images/N/Skill_transfer_N_'+str(N)+'_chain_'+str(run)+'.png')
+        elif v_h:
+            fig.savefig('images/h/Skill_transfer_h_'+str(h)+'_chain_'+str(run)+'.png')
+        else:
+            fig.savefig('images/Skill_transfer_chain_'+str(run)+'.png')
+        if close:
             plt.close(fig)
+            
+     
         
         data_x_save = []
         data_k_save = []        
@@ -232,9 +241,7 @@ def run_file(runs_ = 12, e_th = p.e_th, close = True):
         y_old, dy_old = y, dy
         
         data_x_save.append([y[0], dy[0]])
-        data_k_save.append([k[0], dk[0]])
-        
-        
+        data_k_save.append([k[0], dk[0]])        
     
 
         for i in range(1, samples):

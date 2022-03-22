@@ -13,9 +13,11 @@ import random
 import params as p
 
 
-def run_file(e_th = p.e_th, save_data = True, close = True):
-    dt, exp_time, samples, DOF, N, alpha, beta, lambd, tau, phi, mode, tau, phi, L = \
-        p.dt, p.exp_time, p.samples, p.DOF, p.N, p.alpha, p.beta, p.lambd, p.tau, p.phi, p.mode, p.tau, p.phi, p.L
+def run_file(e_th = p.e_th, N= p.N, h = p.h, \
+             save_data = True, close = True, v_eth = False, v_N = False, v_h = False):
+    
+    dt, exp_time, samples, DOF, alpha, beta, lambd, tau, phi, mode, tau, phi, L = \
+        p.dt, p.exp_time, p.samples, p.DOF, p.alpha, p.beta, p.lambd, p.tau, p.phi, p.mode, p.tau, p.phi, p.L
     K1max, K2max, c1, c2, m, g, mu_s, mu_k, mu_s_random, mu_k_random, F_y, F_n, F_fs_max, F_fk = \
         p.K1max, p.K2max, p.c1, p.c2, p.m, p.g, p.mu_s, p.mu_k, p.mu_s_random, p.mu_k_random, p.F_y, p.F_n, p.F_fs_max, p.F_fk
     
@@ -96,8 +98,7 @@ def run_file(e_th = p.e_th, save_data = True, close = True):
     dy_old = 0
     
     data = []
-    
-    h = 0.5
+
     
     # create a DMP object
     DMP_traject = pDMP(DOF, N, alpha, beta, lambd, dt, h)
@@ -256,7 +257,17 @@ def run_file(e_th = p.e_th, save_data = True, close = True):
     
     ''' Save the data '''
     if save_data:
-        plt.savefig('images/Skill_transfer_e_th_'+str(e_th)+'_chain_1.png')
+        
+        if v_eth: 
+            fig.savefig('images/e_th/Skill_transfer_e_th_'+str(e_th)+'_chain_1.png')
+        elif v_N:
+            fig.savefig('images/N/Skill_transfer_N_'+str(N)+'_chain_1.png')
+        elif v_h:
+            fig.savefig('images/h/Skill_transfer_h_'+str(h)+'_chain_1.png')
+            
+        else:
+            fig.savefig('images/Skill_transfer_chain_1.png')
+
         if close:
             plt.close(fig)
     

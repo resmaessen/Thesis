@@ -7,25 +7,32 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec 
 import learning_human_robot
 import learning_robot_robot
+import time
 
 
 plt.close('all')
+
+time.sleep(2)
 
 e_th = [0.01, 0.02, 0.05]
 runs = 8
 
 
-fig1, ax1 = plt.subplots(2,len(e_th), sharex=True)
-fig2, ax2 = plt.subplots(runs,1, sharex=True)
-fig3, ax3 = plt.subplots(runs,1, sharex=True)
+fig1, ax1 = plt.subplots(2,len(e_th), figsize=(20.0, 10.0), sharex=True)
+fig2, ax2 = plt.subplots(runs,1, figsize=(20.0, 10.0), sharex=True)
+fig3, ax3 = plt.subplots(runs,1, figsize=(20.0, 10.0), sharex=True)
 
 dict_labels3 = {}
 
 
 for i, e_th_ in enumerate(e_th):
-
-    learning_human_robot.run_file(e_th_)
-    learning_robot_robot.run_file(runs,e_th_)
+    
+    start = time.time()
+    
+    learning_human_robot.run_file(e_th = e_th_,v_eth = True)
+    learning_robot_robot.run_file(runs, e_th = e_th_, v_eth = True)
+    
+    time_total = time.time()-start
     
     path = 'save_data'
     
@@ -86,7 +93,7 @@ for i, e_th_ in enumerate(e_th):
     ax2[0].set_ylabel('x0', fontsize = '13')
         
     for idx in range(1,len(data_x_files)):
-        ax2[idx].plot(t, data_x[idx,:,0],label = r"$e_th$ = " + str(e_th_))
+        ax2[idx].plot(t, data_x[idx,:,0],label = r"$e_th$ = " + str(e_th_)+ ' t = ' + str(time_total))
         ax2[idx].set_xticklabels([])
         ax2[idx].set_ylabel('x'+str(idx+1), fontsize='13')  
     
@@ -100,7 +107,7 @@ for i, e_th_ in enumerate(e_th):
     
     
     for idx in range(1,len(data_k_files)):
-        ax3[idx].plot(t, data_k[idx,:,0], label = r"$e_th$ = " + str(e_th_))
+        ax3[idx].plot(t, data_k[idx,:,0], label = r"$e_th$ = " + str(e_th_)+ ' t = ' + str(time_total))
           
         ax3[idx].set_xticklabels([])
         ax3[idx].set_ylabel('K'+str(idx+1), fontsize='13')  
@@ -110,27 +117,14 @@ for i, e_th_ in enumerate(e_th):
     
         
 
-fig3.legend(handles=dict_labels3.values(), bbox_to_anchor=[2, 2.5])
     
-fig3.legend(['test1', 'test2', 'test3'], bbox_to_anchor = [2, 2.5])
-
 ax2[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
 ax3[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
     
     
-    
-'''
- plt.savefig('images/Skill_transfer_total.png')
-    plt.show()
-    
-
-plt.savefig('images/Skill_transfer_x.png')
-    plt.show()
-    
-    plt.savefig('images/Skill_transfer_k.png')
-    plt.show()
-    '''
-
+fig1.savefig('images/e_th/Skill_transfer_e_th_total.png')
+fig2.savefig('images/e_th/Skill_transfer_e_th_total_x.png')
+fig3.savefig('images/e_th/Skill_transfer_e_th_total_k.png')
 
 
 
