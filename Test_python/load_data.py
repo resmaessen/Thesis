@@ -5,8 +5,16 @@ from params import *
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec 
+import learning_human_robot
+import learning_robot_robot
+
 
 plt.close('all')
+
+runs = 10
+
+learning_human_robot.run_file()
+learning_robot_robot.run_file(runs)
 
 path = 'save_data'
 
@@ -19,9 +27,15 @@ for f in files:
     if "_x" in f: data_x_files.append(f)
     elif "_k" in f: data_k_files.append(f)
     else: raise NameError('Other file')
+
     
+data_x_files.sort(key= lambda x: float(x.strip('data_').strip('_x')))
+data_k_files.sort(key= lambda x: float(x.strip('data_').strip('_k')))
 
+data_x_files = data_x_files[:runs]
+data_k_files = data_k_files[:runs]
 
+    
 if len(data_x_files) != len(data_k_files):
     raise NameError('Data was saved incorrectly')
 
@@ -88,7 +102,7 @@ ax0.set_xticklabels([])
 ax0.set_ylabel('K1', fontsize='13')
 ax0.set_ylim([np.min(data_k[:,:,0]),np.max(data_k[:,:,0])])
 
-for idx in range(1,len(data_x_files)):
+for idx in range(1,len(data_k_files)):
     ax = plt.subplot(gs[idx], sharex = ax0)
     ax.plot(t, data_k[idx,:,0], label = "run "+str(idx+1))
     ax.set_xticklabels([])
@@ -101,9 +115,17 @@ plt.savefig('images/Skill_transfer_k.png')
 plt.show()
 
 
+fig = plt.figure(figsize=(18.0, 9.0))
+gs = gridspec.GridSpec(2, 1, height_ratios=[1,1])
+ax0 = plt.subplot(gs[0])
+ax1 = plt.subplot(gs[1])
 
 
-
+for idx in range(1,len(data_k_files)):
+    ax0.plot(t, data_x[idx,:,0]- data_x[idx-1,:,0], label = 'it, '+str(idx)+' - it.' + str(idx-1))
+    ax1.plot(t, data_k[idx,:,0] - data_k[idx-1,:,0])
+    
+ax0.legend(loc = 'center right')
 
 
 

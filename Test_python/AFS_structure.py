@@ -131,7 +131,6 @@ class AFS:
         #desired_dt = 1.0/servo_rate     # Servo_rate
         
         #steps = round(dt / desired_dt + 0.5)
-        #steps = 10
         dt = dt/steps
         
         self.y_fb = np.zeros([self.DOF]) 

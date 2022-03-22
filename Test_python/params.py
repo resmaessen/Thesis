@@ -21,8 +21,8 @@ L = 0.15  # Length movement
 K1max = 1100 # N/m
 K2max = 1100 # N/m
 
-c1 = 120
-c2 = 120
+c1 = 110
+c2 = 110
 
 m = 10 # kg
 g = 9.81
@@ -35,13 +35,9 @@ mu_k_random = 0
 
 e_th = 0.02
 
-ni = 2
-K = 20
-M = 10
-AFS_step = 30
-
 F_y = 5
 F_n = m*g + F_y
 
 F_fs_max = mu_s * N
 F_fk = mu_k*N
+

@@ -63,7 +63,7 @@ for i in range(samples):
    
     myAFS.update_input(0, np.array([y[i]]))
 
-    myAFS.AFS_integrate(dt)        
+    myAFS.AFS_integrate(dt,20)        
     
     output = myAFS.get_output(0)
     phase_last = myAFS.get_phase(0) 

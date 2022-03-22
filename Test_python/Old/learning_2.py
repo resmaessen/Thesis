@@ -195,8 +195,8 @@ for run in runs:
     figManager.window.showMaximized()
     
     # remove vertical gap between subplots
-    plt.close(fig)
     plt.savefig('images/Skill_transfer_chain_'+str(run)+'.png')
+    plt.close(fig)
     
     if save_data:
         data_x_save = []

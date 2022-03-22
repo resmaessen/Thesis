@@ -25,7 +25,7 @@ import numpy as np
 
 class pDMP:
     # INITIALISATION
-    def __init__(self, DOF, N, alpha, beta, lambd, dt):
+    def __init__(self, DOF, N, alpha, beta, lambd, dt, h = 2.5):
     
         # settings
         self.DOF = DOF # degrees of freedom (number of DMPs)
@@ -34,6 +34,7 @@ class pDMP:
         self.beta = beta # DMP gain beta
         self.lambd = lambd # forgetting factor
         self.dt = dt # sample time
+        self.h = h # width of Gaussian
         
         # DMP learning variables
         self.f = np.zeros([self.DOF]) # shape function
@@ -65,7 +66,14 @@ class pDMP:
         return self.y, dy, self.tau, self.phi
     
     
-    
+    def set_state(self, y):
+        self.y = y
+        #self.z = z
+        
+        if self.y.shape != np.zeros([self.DOF]).shape:
+            raise NameError('Shape y is not correct')
+        #if self.z.shape != np.zeros([self.DOF]).shape:
+        #    raise NameError('Shape z is not correct')
     
     # SET DMP PHASE
     def set_phase(self, phi):
@@ -108,7 +116,6 @@ class pDMP:
     
     
     
-    
     # LEARN MODE
     def learn(self, y, dy, ddy):
         f_d = np.zeros([self.DOF])
@@ -124,7 +131,7 @@ class pDMP:
             # recursive least-squares regression
             for j in range(self.N):
                 # update kernels and weights
-                psi[j] = np.exp( 2.5 * self.N * ( np.cos( self.phi[i]- self.c[j] ) - 1 ) )
+                psi[j] = np.exp( self.h * self.N * ( np.cos( self.phi[i]- self.c[j] ) - 1 ) )
                 P_new = ( self.P[i,j] - ( self.P[i,j]**2 * self.r[i]**2 ) / ( self.lambd / psi[j] + self.P[i,j] * self.r[i]**2 ) ) / self.lambd
                 self.w[i,j] += psi[j] * P_new * self.r[i] * ( f_d[i] - self.w[i,j] * self.r[i] )
                 self.P[i,j] = P_new
@@ -153,7 +160,7 @@ class pDMP:
             # recursive least-squares regression
             for j in range(self.N):
                 # update kernels and weights
-                psi[j] = np.exp( 2.5 * self.N * ( np.cos( self.phi[i] - self.c[j] ) - 1 ) )
+                psi[j] = np.exp( self.h * self.N * ( np.cos( self.phi[i] - self.c[j] ) - 1 ) )
                 P_new = ( self.P[i,j] - ( self.P[i,j]**2 * self.r[i]**2 ) / ( self.lambd / psi[j] + self.P[i,j] * self.r[i]**2 ) ) / self.lambd
                 self.w[i,j] += psi[j] * P_new * self.r[i] * U[i]
                 self.P[i,j] = P_new
@@ -181,7 +188,7 @@ class pDMP:
             
             # recursive least-squares regression
             for j in range(self.N):
-                psi[j] = np.exp( 2.5 * self.N * ( np.cos(self.phi[i] - self.c[j] ) - 1 ) )
+                psi[j] = np.exp( self.h * self.N * ( np.cos(self.phi[i] - self.c[j] ) - 1 ) )
                 
                 # sum kernels and weights
                 weighted_sum += self.w[i,j] * psi[j] * self.r[i]
