@@ -113,6 +113,7 @@ class pDMP:
     # GET DMP KERNELS
     def get_kernels(self):
         return self.c
+
     
     
     

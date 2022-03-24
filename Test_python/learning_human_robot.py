@@ -321,4 +321,4 @@ def run_file(e_th = p.e_th, N= p.N, h = p.h, \
 if __name__ == '__main__':
     plt.close('all')
     
-    run_file(save_data=False, close = False)
+    run_file(save_data=True, close = False)

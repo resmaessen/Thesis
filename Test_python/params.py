@@ -21,11 +21,11 @@ L = 0.15  # Length movement
 K1max = 1100 # N/m
 K2max = 1100 # N/m
 
-c1 = 110
-c2 = 110
+c1 = 110 # Damping coeff
+c2 = 110 # Damping coeff
 
 m = 10 # kg
-g = 9.81
+g = 9.81 # Gravitation 
 
 mu_s = 0.35
 mu_k = 0.15
