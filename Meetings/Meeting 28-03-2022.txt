@@ -1,0 +1,23 @@
+Metrices to compare the skill
+- Fourier series (how is the behavior) -> There are package available for this (oscillator to examine  -> is similar)
+- Minium jerk model
+- TRY TO FIND SOME MORE!
+
+- overlap between the signals (original and current one)
+- amplitude (stiffnes and position, might be usefull for stifness to examin maximum stiffness)
+
+check out PEAKS (of matlab) if existi in python tells how many peaks there are in the signal 
+
+
+High level frequency
+
+
+Keep conditions structured
+- Features to look at
+- And tools
+
+
+- Condtion
+- Feature of skill 
+
+Maybe not use a human at all. because frequency becomes annyoing. 

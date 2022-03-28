@@ -5,28 +5,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 from human_robot_weights import human_robot
 from robot_robot_weights import robot_robot
-import time
 from pDMP_functions import pDMP
+from scipy.fft import rfft, rfftfreq
 
 plt.close('all')
 
-time.sleep(2)
+compute_data = False
 
-
-v_N = False
-v_e = True
-v_h = False
-
+runs = 15
 running = np.array([[True, False, False],[False, True, False], [False, False, True]])
 
+N_, e_th_ , h_ = N, e_th, h
 
-for idx2 in range(3):
+for idx2 in range(running.shape[0]):
     v_N, v_e, v_h  = running[idx2]
-    N_all = [5, 25, 100]
-    e_th_all = [0.01, 0.02, 0.05]
-    h_all = [0.5, 1, 5]
     
-    runs = 8
+    N_all = [5, 25, 50, 100]
+    e_th_all = [0.01, 0.02, 0.05]
+    h_all = [0.5, 1, 2.5,  5]
     
     
     if [v_N==True, v_e == True, v_h == True].count(True) != 1 :
@@ -34,21 +30,21 @@ for idx2 in range(3):
     
     if v_N:
         name = 'N'
-        e_th_all = [e_th]*len(N_all)
-        h_all = [h]*len(N_all)
+        e_th_all = [e_th_]*len(N_all)
+        h_all = [h_]*len(N_all)
     elif v_e:
         name = 'e_th'
-        N_all = [N]*len(e_th_all)
-        h_all = [h]*len(e_th_all)
+        N_all = [N_]*len(e_th_all)
+        h_all = [h_]*len(e_th_all)
     elif v_h:
         name = 'h'
-        N = [N]*len(h_all)
-        e_th_all = [e_th]*len(h_all)
+        N = [N_]*len(h_all)
+        e_th_all = [e_th_]*len(h_all)
     else:
         name = 'std'
-        N_all = [N]
-        e_th_all = [e_th]
-        h_all = [h]
+        N_all = [N_]
+        e_th_all = [e_th_]
+        h_all = [h_]
         
         
     if len(N_all) != len(e_th_all) or len(N_all) != len(h_all) or len(e_th_all) != len(h_all):
@@ -58,6 +54,8 @@ for idx2 in range(3):
     fig1, ax1 = plt.subplots(2,len(N_all), figsize=(20.0, 10.0), sharex=True)
     fig2, ax2 = plt.subplots(runs,1, figsize=(20.0, 10.0), sharex=True)
     fig3, ax3 = plt.subplots(runs,1, figsize=(20.0, 10.0), sharex=True)
+    fig4, ax4 = plt.subplots(len(N_all),1, figsize=(20.0, 10.0), sharex=True)
+
         
     
     for i in range(len(N_all)):
@@ -76,32 +74,39 @@ for idx2 in range(3):
             v = 'N/A'
            
     
+        if compute_data:
         
-        start = time.time()
-    
-        human_robot(N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
-        robot_robot(runs, N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
+            human_robot(N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
+            robot_robot(runs, N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
+            
         
-        time_total = time.time()-start
-        
-        path = 'save_data'
+        path = 'save_data/'+name
         
         files = os.listdir(path)
         
         files_w_traject = []
         files_w_stiff = []
         
-                
+        if v_N or v_e or v_h:
+            name_temp = name+"_"+str(v)
+        else:
+            name_temp = name
         
         for f in files:
-            if "data_w_traject_robot" in f: files_w_traject.append(f)
-            elif "data_w_stiff_robot" in f: files_w_stiff.append(f)
-            else: raise NameError('Other file')
+            if v_N or v_e or v_h:
+                if "data_"+name+"_"+str(v)+"_w_traject_robot" in f: files_w_traject.append(f)
+                elif "data_"+name+"_"+str(v)+"_w_stiff_robot" in f: files_w_stiff.append(f)
+            else:
+                if "data_"+name+"_w_traject_robot" in f: files_w_traject.append(f)
+                elif "data_"+name+"_w_stiff_robot" in f: files_w_stiff.append(f)
     
+        if v_N or v_e or v_h:
+            files_w_traject.sort(key= lambda x: float(x.strip('data_'+name+'_').lstrip(str(v)).strip('_w_traject_robot_').strip('.csv')))
+            files_w_stiff.sort(key= lambda x: float(x.strip('data_'+name+'_').lstrip(str(v)).strip('_w_stiff_robot_').strip('.csv')))
+        else:
+            files_w_traject.sort(key= lambda x: float(x.strip('data_'+name+'_').strip('_w_traject_robot_').strip('.csv')))
+            files_w_stiff.sort(key= lambda x: float(x.strip('data_'+name+'_').strip('_w_stiff_robot_').strip('.csv')))
             
-        files_w_traject.sort(key= lambda x: float(x.strip('data_w_traject_robot').strip('.csv')))
-        files_w_stiff.sort(key= lambda x: float(x.strip('data_w_stiff_robot').strip('.csv')))
-        
         files_w_traject = files_w_traject[:runs]
         files_w_stiff = files_w_stiff[:runs]
         
@@ -121,8 +126,8 @@ for idx2 in range(3):
         
         for j in range(len(files_w_traject)):
             
-            w_traject = np.loadtxt('save_data/'+files_w_traject[j], unpack=True)
-            w_stiff = np.loadtxt('save_data/'+files_w_stiff[j], unpack=True)
+            w_traject = np.loadtxt('save_data/'+name+'/'+files_w_traject[j], unpack=True)
+            w_stiff = np.loadtxt('save_data/'+name+'/'+files_w_stiff[j], unpack=True)
             
             DMP_traject = pDMP(DOF, N, alpha, beta, lambd, dt, h)
             DMP_stiff = pDMP(DOF, N, alpha, beta, lambd, dt, h)
@@ -170,21 +175,23 @@ for idx2 in range(3):
                 
     
             
-            ax2[j].plot(t, data[:,0],label = name +' = ' + str(v) +'t = ' + str(time_total))
+            ax2[j].plot(t, data[:,0],label = name +' = ' + str(v))
             ax2[j].set_xticklabels([])
             ax2[j].set_ylabel('x'+str(j+1), fontsize='13')  
             
-            ax3[j].plot(t, data[:,1],label = name +' = ' + str(v) +'t = ' + str(time_total))
+            ax3[j].plot(t, data[:,1],label = name +' = ' + str(v))
             ax3[j].set_xticklabels([])
             ax3[j].set_ylabel('K'+str(j+1), fontsize='13')  
+            
+            ax4[i].plot(rfftfreq(samples, dt), np.abs(rfft(data[:,0])), label = 'run '+str(j+1))
+            ax4[i].set_ylabel('Power')
         
                
-        
+       
         ax1[0,i].set_xticklabels([])
         ax1[1,i].set_xticklabels([])
         
         if i == 0:
-            ax1[0,i].legend(loc = "lower right")
             ax1[0,i].set_ylabel('x[m]', fontsize='13')
             ax1[1,i].set_ylabel('K [N/m]', fontsize='13')
             
@@ -193,22 +200,25 @@ for idx2 in range(3):
             
         ax1[1,i].set_xlabel('time [s]', fontsize='13')
         
-          
+        if i is not len(N_all):
+            ax4[i].set_xticklabels([])
         
-            
-    
+          
+    ax1[0,-1].legend(loc='center left', bbox_to_anchor=(1, 0.5))
     ax2[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
     ax3[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax4[-1].set_xlabel('frequency')
+    ax4[2].legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
         
         
     fig1.savefig('images/'+name+'/ST_'+name+'_total.png')
     fig2.savefig('images/'+name+'/ST_'+name+'_total_x.png')
     fig3.savefig('images/'+name+'/ST_'+name+'_total_k.png')
-    
-    
-    
-    
-    
-    
+    fig4.savefig('images/'+name+'/St_'+name+'_frequency')
+
+    fig1.savefig('images/final/ST_'+name+'_total.png')
+    fig2.savefig('images/final/ST_'+name+'_total_x.png')
+    fig3.savefig('images/final/ST_'+name+'_total_k.png')
+    fig4.savefig('images/final/St_'+name+'_frequency')
     
     

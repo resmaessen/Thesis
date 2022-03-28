@@ -27,12 +27,12 @@ c2 = 110 # Damping coeff
 m = 10 # kg
 g = 9.81 # Gravitation 
 
-mu_s = 0.35
+mu_s = 0.2
 mu_k = 0.15
 mu_s_random = 0
 mu_k_random = 0
 
-h = 0.5
+h = 1.5
 
 
 e_th = 0.02

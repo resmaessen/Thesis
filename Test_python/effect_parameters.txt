@@ -1,0 +1,29 @@
+____________________
+h
+
+dy can be larger when h is larger -> steepness is larger
+so if Kmax -> 0 is desired, it goes much faster,
+thus the learning is more reactive
+ 
+
+
+
+
+
+____________________
+N
+amount of peaks (much more if N becomes larger)
+advantage: large N result in better stiffness
+disadvantage: larg N can result in overfitting
+
+
+
+____________________
+e_th
+changes in stifness scheme
+if larger K tries to go to 0 more often
+due to which the difference compared to the desired trajectory becomes larger
+which result in the error being larger
+and thus the stiffness goes more often to Kmax
+
+

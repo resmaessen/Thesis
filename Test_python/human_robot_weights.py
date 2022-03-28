@@ -241,19 +241,23 @@ def human_robot(e_th = e_th, N= N, h = h, \
     
     # remove vertical gap between subplots
     if save_data:
-        
         if v_eth: 
-            fig.savefig('images/e_th/ST_e_'+str(e_th)+'_robot_1.png')
+            fig.savefig('images/e_th/ST_e_th_'+str(e_th)+'_robot_1.png')
+            np.savetxt('save_data/e_th/data_e_th_'+str(e_th)+'_w_traject_robot_1.csv', w_traject)
+            np.savetxt('save_data/e_th/data_e_th_'+str(e_th)+'_w_stiff_robot_1.csv', w_stiff)
         elif v_N:
             fig.savefig('images/N/ST_N_'+str(N)+'_robot_1.png')
+            np.savetxt('save_data/N/data_N_'+str(N)+'_w_traject_robot_1.csv', w_traject)
+            np.savetxt('save_data/N/data_N_'+str(N)+'_w_stiff_robot_1.csv', w_stiff)
         elif v_h:
             fig.savefig('images/h/ST_h_'+str(h)+'_robot_1.png')  
+            np.savetxt('save_data/h/data_h_'+str(h)+'_w_traject_robot_1.csv', w_traject)
+            np.savetxt('save_data/h/data_h_'+str(h)+'_w_stiff_robot_1.csv', w_stiff)
         else:
             fig.savefig('images/std/ST_std_robot_1.png')
+            np.savetxt('save_data/std/data_std_w_traject_robot_1.csv', w_traject)
+            np.savetxt('save_data/std/data_std_w_stiff_robot_1.csv', w_stiff)
         
-        np.savetxt('save_data/data_w_traject_robot_1.csv', w_traject)
-        np.savetxt('save_data/data_w_stiff_robot_1.csv', w_stiff)
-
     if close:
         plt.close(fig)
     
