@@ -145,7 +145,7 @@ for j in range(len(files_w_traject)):
         ax4[j].plot(t,data[:,0], color = 'b')
         ax4[j].set_ylabel('x' + str(j))
         
-    ax5.plot(rfftfreq(samples, dt), np.abs(rfft(data[:,0])), label = 'run '+str(j))
+    ax5.plot(rfftfreq(samples, dt), np.abs(rfft(data[:,1])), label = 'run '+str(j))
 
             
     data_save = data
