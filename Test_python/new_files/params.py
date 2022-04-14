@@ -8,7 +8,7 @@ N = 50 # number of weights per DMP (more weights can reproduce more complicated 
 alpha = 8 # DMP gain alpha
 beta = 2 # DMP gain beta
 lambd = 0.995 # forgetting factor
-tau = 6 # DMP time period = 1/frequency (NOTE: this is the frequency of a periodic DMP)
+tau = 1 # DMP time period = 1/frequency (NOTE: this is the frequency of a periodic DMP)
 
 mode = 1 # DMP mode of operation (see below for details)
 

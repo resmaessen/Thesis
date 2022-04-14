@@ -13,8 +13,8 @@ from scipy.fft import rfft, rfftfreq
 plt.close('all')
 
 
-runs = 8
-compute_data = False   
+runs = 20
+compute_data = True   
     
 
     
@@ -166,16 +166,22 @@ ax5.legend()
 ax5.set_ylabel('Power')
 ax5.set_xlabel('Frequency')
   
+fig1.tight_layout()
+fig2.tight_layout()
+fig3.tight_layout()
+fig5.tight_layout()
 
-fig1.savefig('images/STD/ST_std_total.png')
-fig2.savefig('images/STD/ST_std_total_x.png')
-fig3.savefig('images/STD/ST_std_total_k.png')
-fig5.savefig('images/STD/ST_std_frequency')
-
-fig1.savefig('images/final/ST_std_total.png')
-fig2.savefig('images/final/ST_std_total_x.png')
-fig3.savefig('images/final/ST_std_total_k.png')
-fig5.savefig('images/final/ST_std_frequency')
-
+save_data = False
+if save_data: 
+    fig1.savefig('images/STD/ST_std_total.png')
+    fig2.savefig('images/STD/ST_std_total_x.png')
+    fig3.savefig('images/STD/ST_std_total_k.png')
+    fig5.savefig('images/STD/ST_std_frequency')
+    
+    fig1.savefig('images/final/ST_std_total.png')
+    fig2.savefig('images/final/ST_std_total_x.png')
+    fig3.savefig('images/final/ST_std_total_k.png')
+    fig5.savefig('images/final/ST_std_frequency')
+    
 
 

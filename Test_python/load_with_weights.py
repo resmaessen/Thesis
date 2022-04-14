@@ -77,8 +77,8 @@ for idx2 in range(running.shape[0]):
         if compute_data:
         
             human_robot(N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
-            robot_robot(runs, N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
-            
+            robot_robot(runs,N= N, e_th = e_th, h = h, v_N = v_N, v_eth = v_e, v_h = v_h)
+
         
         path = 'save_data/'+name
         
@@ -209,6 +209,12 @@ for idx2 in range(running.shape[0]):
     ax3[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
     ax4[-1].set_xlabel('frequency')
     ax4[2].legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+    
+      
+    fig1.tight_layout()
+    fig2.tight_layout()
+    fig3.tight_layout()
+    fig4.tight_layout()
         
         
     fig1.savefig('images/'+name+'/ST_'+name+'_total.png')

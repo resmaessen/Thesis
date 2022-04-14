@@ -25,6 +25,7 @@ def human_robot(e_th = e_th, N= N, h = h, \
     K1_full = np.asarray([np.sin(phase[i]) * K1max for i in range(samples)])
     K1_full[:int(samples/3)] = K1max    
     K1_full[K1_full<0] = 0
+    K1_full[K1_full>0] = K1max
     
     xm_init = L
     x1_init = xm_init
@@ -343,5 +344,5 @@ plt.plot(data_k_save[:,0])
 '''
 
 if __name__ == "__main__":
-    plt.close('all')
-    human_robot(close = False)
+    #plt.close('all')
+    human_robot(close = False, save_data = False)
